@@ -66,13 +66,22 @@ class Api {
         return $this->request($url, $method, $queryString);
     }
 
+    /**
+     * [updateObject update object]
+     * @param  [type] $id          [objectId]
+     * @param  [type] $queryString [queryString]
+     * @param  array  $images      [description]
+     * @return [type]              [description]
+     */
     public function updateObject($id, $queryString, $images=[]){
         $url=$this->getEndpoints()['Objects']['url'].'/'.$id;
-        $contentType='application/x-www-form-urlencoded';
+        $contentType='multipart/form-data';
+        /*
         if ($images){
             $contentType='multipart/form-data';
         }
-        return $this->request($url, 'put', $queryString, $images, $contentType);
+        */
+        return $this->request($url, 'post', $queryString, $images, $contentType);
     }
 
     public function createObject($queryString, $images=[]){
@@ -126,7 +135,7 @@ class Api {
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         if ($method=='post' || $method=='put'){
             if ($method=='put'){
-                //curl_setopt($ch, CURLOPT_PUT, 1);
+                curl_setopt($ch, CURLOPT_PUT, 1);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                 /*
                 $pieces=explode('&', $queryString);
@@ -136,7 +145,7 @@ class Api {
                 }
                 $queryString=$vars;
                 */
-                //$queryString=urldecode($queryString);
+                $queryString=urldecode($queryString);
                 $additionalHeaders[]='Content-Length: '.strlen($queryString);
             }else{
                 curl_setopt($ch, CURLOPT_POST, 1);
@@ -160,6 +169,9 @@ class Api {
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge(array('Content-Type: '.$contentType), $additionalHeaders));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         $return = curl_exec($ch);
+        //if ($method=='post'){
+        //    echo $return;
+        //}
         if ($return==FALSE && curl_errno($ch)) {
             //one more attempt
             sleep(2);
@@ -224,7 +236,7 @@ class Api {
                 $objectsPropertiesValues[$id]['ObjectsPropertiesValues']=[
                     'property_id'=>$id,
                     'type'=>$value['type'],
-                    'value'=>$value['value'],
+                    'value'=>($value['type']=='object' ? $value['value']['id'] : $value['value']),
                 ];
                 if (isset($value['category'])){
                     $objectsPropertiesValues[$id]['ObjectsPropertiesValues']['category_id']=$value['category']['id'];

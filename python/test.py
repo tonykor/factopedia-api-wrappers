@@ -12,7 +12,7 @@ def main() -> None:
     # print('Response:', response, response.json(), '\n')
 
     print('Creating a new object named "test" [lang="en", parent_id=42102, description="Lorem ipsum ut in in minim est reprehenderit excepteur eiusmod proident esse.", images=["map.png", "moon.jpg"], main_image="map.png", proporties=[{\'id\': 151, \'type\': \'text\', \'value\': \'Just a test\'}], aliases=["helloman", "hellowoman"]')
-    f_response = api.create_object('Excepteur dolor', 'en', parent_id=42102, description='Lorem ipsum ut in in minim est reprehenderit excepteur eiusmod proident esse.', images=['map.png', 'moon.jpg'], main_image='moon.jpg', properties=[{'id': 151, 'type': 'text', 'value': 'Just a test'}, {'id': 154, 'type': 'int', 'value': '125', 'unit_id': 8, 'order_by': 2, 'category_id':8}], aliases=['lorem', 'ipsum', 'sit'])
+    f_response = api.create_object('Excepteur dolor', 'en', parent_id=42102, description='Lorem ipsum ut in in minim est reprehenderit excepteur eiusmod proident esse.', images=['map.png', 'moon.jpg'], main_image='moon.jpg', properties=[{'id': 151, 'type': 'text', 'value': 'Just a test'}, {'id': 154, 'type': 'int', 'value': '125', 'unit_id': 8, 'order_by': 2, 'category_id':8}], aliases=['lorem', 'ipsum', 'sit'], links=[{'property': 154, 'url': 'https://factopedia.org'}, {'property': 151, 'url': 'https://api.factopedia.org'}])
     print('Response:', f_response, f_response.json(), '\n')
 
     print('Get an object by filter [name="Chemistry"]')

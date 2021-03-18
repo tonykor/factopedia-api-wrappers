@@ -1,7 +1,7 @@
 import factopedia
 
 def main() -> None:
-    api = factopedia.Factopedia('nuhdSQ5XdgY-lmnXGhmUndgMX6gyomUA')
+    api = factopedia.Factopedia('YOUR_API_KEY')
 
     # print('Get an object by id 100 expand=["parents", "propertirs"]')
     # response = api.get_object_by_id(100, expand=['parents', 'properties'])
@@ -11,8 +11,8 @@ def main() -> None:
     # response = api.get_object(name='Cars', expand=['parents', 'children'])
     # print('Response:', response, response.json(), '\n')
 
-    print('Creating a new object named "test" [lang="en", parent_id=42102, description="Hello hello", images=["map.png", "moon.jpg"], main_image="map.png", proporties=[{\'id\': 151, \'type\': \'text\', \'value\': \'Just a test\'}], aliases=["helloman", "hellowoman"]')
-    f_response = api.create_object('test', 'en', parent_id=42102, description='Hello hello', aliases=['helloman', 'hellowoman'], images=['map.png', 'moon.jpg'], main_image='map.png', properties=[{'id': 151, 'type': 'text', 'value': 'Just a test'}])
+    print('Creating a new object named "test" [lang="en", parent_id=42102, description="Lorem ipsum ut in in minim est reprehenderit excepteur eiusmod proident esse.", images=["map.png", "moon.jpg"], main_image="map.png", proporties=[{\'id\': 151, \'type\': \'text\', \'value\': \'Just a test\'}], aliases=["helloman", "hellowoman"]')
+    f_response = api.create_object('Excepteur dolor', 'en', parent_id=42102, description='Lorem ipsum ut in in minim est reprehenderit excepteur eiusmod proident esse.', images=['map.png', 'moon.jpg'], main_image='moon.jpg', properties=[{'id': 151, 'type': 'text', 'value': 'Just a test'}, {'id': 154, 'type': 'int', 'value': '125', 'unit_id': 8, 'order_by': 2, 'category_id':8}], aliases=['lorem', 'ipsum', 'sit'])
     print('Response:', f_response, f_response.json(), '\n')
 
     print('Get an object by filter [name="Chemistry"]')

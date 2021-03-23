@@ -121,8 +121,19 @@ class Factopedia:
                     raise KeyError(f'The key "{key}" of the property is invalid.')
 
                 if type(_property[key]) == list and key == 'value':
-                    payload[f'Objects[objectsPropertiesValues][{_property["id"]}][ObjectsPropertiesValues][{key}][]'] = _property[key][0]
+                    for index, value in enumerate(_property[key]):
+                        try:
+                            value = value.strip()
+                        except:
+                            pass
+
+                        payload[f'objectsPropertiesValues[{_property["id"]}][ObjectsPropertiesValues][{key}][{index}]'] = value
                 else:
+                    try:
+                        _property[key] = _property[key].strip()
+                    except:
+                        pass
+
                     payload[f'objectsPropertiesValues[{_property["id"]}][ObjectsPropertiesValues][{key}]'] = _property[key]
 
         for link in links:

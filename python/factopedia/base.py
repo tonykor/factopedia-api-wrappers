@@ -82,19 +82,20 @@ class Factopedia:
 
         payload = {
             'name': name,
-            'lang': language,
-            'description': description,
-            'parents[][Objects][id]': str(parent_id)
+            'lang': language
         }
+
+        if description:
+            payload['description'] = description
+        
+        if parent_id:
+            payload['parents[][Objects][id]'] = str(parent_id)
 
         for index in range(len(children)):
             payload[f'children[{index}][Objects][id]'] = str(children[index])
 
         for index in range(len(aliases)):
             payload[f'aliases[{index}]'] = aliases[index]
-
-        for link in links:
-            payload[f'Links[{links["property"]}][url]'] = links['url']
 
         files = []
         for i in range(len(images)):
@@ -119,24 +120,38 @@ class Factopedia:
                 if key not in self.valid_property_settings:
                     raise KeyError(f'The key "{key}" of the property is invalid.')
 
-                payload[f'objectsPropertiesValues[{_property["id"]}][ObjectsPropertiesValues][{key}]'] = _property[key]
+                if type(_property[key]) == list and key == 'value':
+                    payload[f'Objects[objectsPropertiesValues][{_property["id"]}][ObjectsPropertiesValues][{key}][]'] = _property[key][0]
+                else:
+                    payload[f'objectsPropertiesValues[{_property["id"]}][ObjectsPropertiesValues][{key}]'] = _property[key]
+
+        for link in links:
+            payload[f'Links[{link["property"]}][url]'] = link['url']
 
         url = self.get_url('objects')
         with requests.post(url, headers=self.headers, data=payload, files=files) as response:
             return response
 
-    def update_object(self, object_id: int, aliases: list = [], **kwargs) -> requests.Response:
+    def update_object(self, object_id: int, aliases: list = [], links: list = [], **kwargs) -> requests.Response:
         """
         Updates an object by his id. Updated fields are the kwargs.
         Input: object_id: int, aliases: list = [], **kwargs.
         Output: requests.Response.
         """
 
-        if not kwargs:
+        if not kwargs and not links and not aliases:
             raise ValueError(f'You didn\'t provide any changes to object id {object_id}.')
 
-        object_payload = self.get_object_by_id(object_id).json()
-        object_payload['aliases'] += aliases
+        object_payload = self.get_object_by_id(object_id, expand=['properties']).json()
+        # object_payload['aliases'] += aliases
+        print(object_payload)
+
+        for link in links:
+            _property = str(link['property'])
+            if _property in object_payload['properties']:
+                object_payload['properties'][_property]['link'] = link['url']
+
+            payload = {f'Links[{link["property"]}][url]': link['url']}
 
         for key in kwargs.keys():
             if key in self.update_values:
@@ -145,7 +160,7 @@ class Factopedia:
             object_payload[key] = kwargs[key]
 
         url = self.get_url(f'objects/{object_id}')
-        with requests.put(url, headers=self.headers, data=object_payload) as response:
+        with requests.put(url, headers=self.headers, data=payload) as response:
             return response
 
     def get_property(self, name: str, language: str) -> requests.Response:
@@ -181,6 +196,77 @@ class Factopedia:
         }
 
         url = self.get_url('properties')
+        with requests.post(url, headers=self.headers, data=payload) as response:
+            return response
+
+    def get_unit(self, name: str, language: str) -> requests.Response:
+        """
+        Returns a unit by name and lagnuage.
+        Input: name: str, language: str.
+        Output: requests.Response.
+        """
+
+        if language and len(language) != 2:
+            raise SyntaxError('Language must be 2 characters.')
+
+        url_params = f'filter[name]={name}&lang={language}'
+        url = self.get_url('units') + '?' + url_params
+
+        with requests.get(url, headers=self.headers) as response:
+            return response
+
+    def create_unit(self, name: str, language: str, unit_type: str) -> requests.Response:
+        """
+        Creates a new unit using the parameters.
+        Input: name: str, language: str, unit_type: str.
+        Output: requests.Response.
+        """
+
+        if language and len(language) != 2:
+            raise SyntaxError('Language must be 2 characters.')
+
+        payload = {
+            'name': name,
+            'lang': language,
+            'type': unit_type
+        }
+
+        url = self.get_url('units')
+        with requests.post(url, headers=self.headers, data=payload) as response:
+            return response
+
+    def get_property_category(self, name: str, language: str) -> requests.Response:
+        """
+        Returns a property category by name and lagnuage.
+        Input: name: str, language: str.
+        Output: requests.Response.
+        """
+
+        if language and len(language) != 2:
+            raise SyntaxError('Language must be 2 characters.')
+
+        url_params = f'filter[name]={name}&lang={language}'
+        url = self.get_url('properties-categories') + '?' + url_params
+
+        with requests.get(url, headers=self.headers) as response:
+            return response
+
+    def create_property_category(self, name: str, language: str) -> requests.Response:
+        """
+        Creates a new property category using the parameters.
+        Input: name: str, language: str.
+        Output: requests.Response.
+        """
+
+        if language and len(language) != 2:
+            raise SyntaxError('Language must be 2 characters.')
+
+        payload = {
+            'name': name,
+            'lang': language
+        }
+
+        url = self.get_url('properties-categories')
         with requests.post(url, headers=self.headers, data=payload) as response:
             return response
 

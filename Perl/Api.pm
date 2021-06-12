@@ -1,4 +1,4 @@
-package FactopediaAPI;
+package Api;
 
 use strict;
 use warnings;

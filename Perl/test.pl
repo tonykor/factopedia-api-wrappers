@@ -1,11 +1,11 @@
-use lib 'D:/Projects/Perl/factopedia'; ## Path to folder factopedia which contains both files FactopediaAPI.pm and testAPI.pl
+use lib './'; ## Path to folder factopedia which contains both files Api.pm and test.pl
 use strict;
 use warnings;
 
-use FactopediaAPI;
+use Api;
 use Data::Dumper;
 
-my $f = FactopediaAPI->new('---API KEY---',0);  # use value 1 for printing DEBUG information of
+my $f = Api->new('---API KEY---',0);  # use value 1 for printing DEBUG information of
 # HTTP request  while 0 for not printing. The default user-agent is "MyApp/0.1" unless specified as third argument of constructor
 
 my $p = $f->endPoints();  # information about endpoints which this Perl Factopedia API class provides
